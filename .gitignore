@@ -1,4 +1,4 @@
 venv/
 app/models/**
-chicken-disease-1/
+chicken-diseases/
 kaggle.json
