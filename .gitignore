@@ -1,4 +1,7 @@
+__pycache__/
 venv/
-app/models/**
+web-app/backend/models/**
 chicken-diseases/
 kaggle.json
+web-app/frontend/node_modules/
+.env

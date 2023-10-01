@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "coccidiosis",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -11,9 +11,13 @@
     "@headlessui/vue": "^1.7.7",
     "@heroicons/vue": "^2.0.13",
     "@xstate/vue": "^2.0.0",
+    "awesome-snackbar": "^2.0.7",
+    "axios": "^1.5.1",
     "vue": "^3.2.45",
     "vue-connect-wallet": "^0.1.7",
+    "vue-google-oauth2": "^1.5.10",
     "vue-router": "^4.1.6",
+    "vue3-google-login": "^2.0.23",
     "xstate": "^4.35.2"
   },
   "devDependencies": {
