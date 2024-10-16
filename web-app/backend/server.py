@@ -1,51 +1,73 @@
-from starlette.applications import Starlette
-from starlette.responses import HTMLResponse
-from starlette.staticfiles import StaticFiles
-from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import HTMLResponse, JSONResponse
-from starlette.routing import Route
+import sys
 import asyncio
 import uvicorn
-import sys
 import nest_asyncio
+from starlette.middleware import Middleware
+from starlette.applications import Starlette
+from starlette.staticfiles import StaticFiles
+from starlette.templating import Jinja2Templates
+from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import HTMLResponse, JSONResponse
 
-from file_transfer import dowload_image_from_form_data
-from constants import TEMPORARY_IMAGE_FILE_PATH, PATH
 from model_logic import model_predict, setup_model
+from constants import ALLOWED_METHODS, ALLOWED_ORIGINS, TEMPORARY_IMAGE_FILE_PATH, PATH
+from file_transfer import dowload_image_from_form_data
+from authentication import get_user_details_from_google_code
+
 
 nest_asyncio.apply()
-app = Starlette()
-app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_headers=['X-Requested-With', 'Content-Type'])
-app.mount('/static', StaticFiles(directory='static'))
+middleware = [
+    Middleware(
+        CORSMiddleware,
+        allow_origins=ALLOWED_ORIGINS,
+        allow_methods=ALLOWED_METHODS,
+    ),
+]
+templates = Jinja2Templates(directory="templates")
+app = Starlette(middleware=middleware)
+app.mount("/static", StaticFiles(directory="static"))
 
-# Asynchronous Steps
 loop = asyncio.get_event_loop()
 tasks = [asyncio.ensure_future(setup_model())]
 model = loop.run_until_complete(asyncio.gather(*tasks))[0]
 
+
 @app.route("/api/upload", methods=["POST"])
-async def upload(request):
+async def upload_api(request):
     data = await request.form()
-    if 'file' not in data:
-        return JSONResponse({'error': 'File is required!'})
+    if "file" not in data:
+        return JSONResponse({"error": "File is required!"})
     await dowload_image_from_form_data(data)
     label, _, code, accuracy = model_predict(TEMPORARY_IMAGE_FILE_PATH, model)
-    return JSONResponse({'label': label, 'accuracy': float(accuracy), 'code': code})
+    return JSONResponse({"label": label, "accuracy": float(accuracy), "code": code})
+
 
 @app.route("/upload", methods=["POST"])
 async def upload(request):
     data = await request.form()
     await dowload_image_from_form_data(data)
     label, color, _, accuracy = model_predict(TEMPORARY_IMAGE_FILE_PATH, model)
-    result_html1 = PATH/'static'/'result1.html'
-    result_html2 = PATH/'static'/'result2.html'
-    result_html = str(result_html1.open().read() + '<span style=\"color: ' + color + ';\">' + label + '</span>' + ' at <span style=\"color: blue;\">' + str(round(accuracy*100, 2)) + '%</span> accuracy' + result_html2.open().read())
-    return HTMLResponse(result_html)
+    return templates.TemplateResponse(
+        request,
+        "result.html",
+        {"accuracy": str(round(accuracy)), "color": color, "label": label},
+    )
+
+
+@app.route("/code", methods=["POST"])
+async def code(request):
+    code = request.headers.get("authorization", None)
+    return (
+        JSONResponse({"error": "Code cannot be none"})
+        if not code
+        else get_user_details_from_google_code(request, code)
+    )
+
 
 @app.route("/")
-def form(request):
-    index_html = PATH/'static'/'index.html'
-    return HTMLResponse(index_html.open().read())
+def form(_):
+    return HTMLResponse((PATH / "static" / "index.html").open().read())
 
-if __name__ == "__main__":
-    if "serve" in sys.argv: uvicorn.run(app, host="127.0.0.1", port=8080)
+
+if __name__ == "__main__" and "serve" in sys.argv:
+    uvicorn.run(app, host="0.0.0.0", port=8080, log_level="debug")
