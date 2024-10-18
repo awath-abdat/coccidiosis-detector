@@ -1,4 +1,4 @@
-import type { TransitionConfig } from "xstate";
+import { TransitionConfig } from "xstate";
 import { assign, createMachine } from "xstate";
 
 export type FetchResponse<T> = T & {
@@ -26,18 +26,25 @@ export type CreateFetchMachineOpts<I, R> = {
 const MAX_ATTEMPTS = 3;
 
 export const FetchMachine = {
-  hasError(_: any, ev: { data: { error?: any } }) {
+  hasError(_: object, ev: { data: { error?: { message: string } } }) {
     return Boolean(ev.data?.error);
   },
-  errorState(state: string): TransitionConfig<any, any> {
+  errorState(
+    state: string,
+  ): TransitionConfig<
+    object,
+    { type: string; data: { error?: { message: string } } }
+  > {
     return {
       cond: FetchMachine.hasError,
       target: state,
       actions: [
-        assign((ctx: any, ev: { data: { error?: any } }) => ({
-          ...ctx,
-          error: ev.data.error.message,
-        })),
+        assign(
+          (ctx: object, ev: { data: { error?: { message: string } } }) => ({
+            ...ctx,
+            error: ev.data.error?.message,
+          }),
+        ),
       ],
     };
   },
@@ -47,7 +54,8 @@ export const FetchMachine = {
       {
         predictableActionArguments: true,
         // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-        tsTypes: {} as import("./fetchMachine.typegen").Typegen0,
+        // @ts-expect-error: Incosistent typing is intentional
+        tsTypes: {} as import("./fetchMachine.js.typegen").Typegen0,
         schema: {
           context: {} as MachineContext<Input>,
           services: {} as MachineServices<Result>,
@@ -89,7 +97,7 @@ export const FetchMachine = {
           failed: {
             entry: ["assignError", "showError"],
             type: "final",
-            data: (ctx, ev) => ({ error: ev.data }),
+            data: (_, ev) => ({ error: ev.data }),
           },
           success: {
             type: "final",
@@ -101,13 +109,13 @@ export const FetchMachine = {
         actions: {
           showError: (_, ev) => {
             if (!opts.showError) return;
-            const error = ev.data as any;
+            const error = ev.data as string;
             throw new Error(error);
           },
           assignError: assign({
             error: (_, ev) => ev.data,
           }),
-          logError: (_, ev: { data: any }) => {
+          logError: (_, ev: { data: { error?: { message: string } } }) => {
             // eslint-disable-next-line no-console
             console.error(ev.data);
           },
@@ -117,7 +125,9 @@ export const FetchMachine = {
         },
         guards: {
           hasManyAttempts: (ctx) => {
-            return Boolean((ctx?.attempts ?? 0) >= (opts?.maxAttempts || MAX_ATTEMPTS));
+            return Boolean(
+              (ctx?.attempts ?? 0) >= (opts?.maxAttempts || MAX_ATTEMPTS),
+            );
           },
         },
         services: {

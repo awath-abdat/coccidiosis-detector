@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { MoonIcon, SunIcon } from "@heroicons/vue/24/outline";
 import { useDark, useToggle } from "@vueuse/core";
-import Snackbar from 'awesome-snackbar';
 
 const isDark = useDark();
 const toggleLightSwitch = useToggle(isDark);

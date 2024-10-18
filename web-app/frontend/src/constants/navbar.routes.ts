@@ -1,9 +1,4 @@
-import {
-  BookmarkSquareIcon,
-  EllipsisHorizontalIcon,
-  LockClosedIcon,
-  HomeIcon,
-} from "@heroicons/vue/24/outline";
+import { LockClosedIcon, HomeIcon } from "@heroicons/vue/24/outline";
 import { FunctionalComponent, HTMLAttributes, VNodeProps } from "vue";
 
 type Item = {
@@ -36,18 +31,4 @@ export const navbarRoutes = [
     icon: LockClosedIcon,
     path: "/login",
   },
-  // {
-  //   title: "More",
-  //   icon: EllipsisHorizontalIcon,
-  //   menuOptions: {
-  //     items: [
-  //       {
-  //         name: "Star on Github",
-  //         description: "See the source Code and use it on your page",
-  //         url: "http://github.com/LFSCamargo/vue.pnpm",
-  //         icon: BookmarkSquareIcon,
-  //       },
-  //     ] as Item[],
-  //   },
-  // },
 ] as Routes[];

@@ -1,7 +1,7 @@
-const defaultTheme = require("tailwindcss/defaultTheme");
+import defaultTheme from "tailwindcss/defaultTheme";
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
@@ -17,6 +17,7 @@ module.exports = {
         black: "#000",
         almostBlack: "#1E1E1E",
         darkGrey: "#27272A",
+        googleRed: "#EB4335",
       },
     },
   },

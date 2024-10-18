@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Heading } from "@core/components";
+import { Heading } from "@/components";
 
-import { Tailwind, XState, Vue, Vite, PNPM } from "@core/assets";
+import { Tailwind, XState, Vue, Vite, PNPM } from "@/assets";
 import { BoltIcon } from "@heroicons/vue/24/outline";
 </script>
 

@@ -11,7 +11,7 @@ import {
 
 import { Bars3Icon, ChevronUpIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { ChevronDownIcon } from "@heroicons/vue/20/solid";
-import { navbarRoutes } from "@core/constants";
+import { navbarRoutes } from "@/constants";
 import LightSwitch from "./LightSwitch.vue";
 </script>
 

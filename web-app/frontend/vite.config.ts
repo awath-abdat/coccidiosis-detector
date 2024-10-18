@@ -1,8 +1,8 @@
 import path from "path";
-import { defineConfig } from "vite";
+import vueSvg from "vite-svg-loader";
 import vue from "@vitejs/plugin-vue";
 import vitePages from "vite-plugin-pages";
-import vueSvg from "vite-svg-loader";
+import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,7 +15,7 @@ export default defineConfig({
     vueSvg(),
     // https://github.com/hannoeru/vite-plugin-pages#configuration
     vitePages({
-      dirs: "src/modules/**/pages",
+      dirs: "src/**/pages",
     }),
   ],
   resolve: {
@@ -24,7 +24,6 @@ export default defineConfig({
       stream: "stream-browserify",
       zlib: "browserify-zlib",
       "@": path.resolve(__dirname, "./src"),
-      "@core": path.resolve(__dirname, "./src/modules/core"),
     },
   },
 });

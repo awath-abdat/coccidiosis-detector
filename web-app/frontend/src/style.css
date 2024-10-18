@@ -3,6 +3,29 @@
 @tailwind utilities;
 @tailwind variants;
 
+:root {
+  --background-color-primary: theme("colors.offWhite");
+  --background-color-secondary: #fafafa;
+  --accent-color: #cacaca;
+  --text-primary-color: theme("colors.brand");
+  --element-size: 4rem;
+}
+
+/* Define styles for the root window with dark - mode preference */
+:root.dark {
+  --background-color-primary: theme("colors.black");
+  --background-color-secondary: #2d2d30;
+  --accent-color: #3f3f3f;
+  --text-primary-color: theme("colors.brand");
+}
+
 .w3m-loading {
   padding: 0px 0px !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary-color);
+  -webkit-box-shadow: 0 0 0px 40rem var(--background-color-primary) inset;
 }

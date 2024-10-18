@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Header } from "@core/components";
+import { Header } from "./components";
 </script>
 
 <template>

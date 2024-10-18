@@ -10,7 +10,7 @@ chicken-diseases/
 web-app/frontend/node_modules/
 
 .env
-.DS_STORE
+.DS_Store
 
 
 *.keras
